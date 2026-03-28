@@ -52,14 +52,38 @@ class Enemy(GameSprite):
         else:
             self.rect.x += self.speed
 
+class Wall(sprite.Sprite):
+    def __init__(self, color_1, color_2, color_3, wall_x, wall_y, width, height):
+        super().__init__()
+        self.color_1 = color_1
+        self.color_2 = color_2
+        self.color_3 = color_3
+        self.width = width
+        self.height = height
+        self.image = Surface((self.width, self.height))
+        self.image.fill((color_1, color_2, color_3))
+        self.rect = self.image.get_rect()
+        self.rect.x = wall_x
+        self.rect.y = wall_y
+
+    def draw_wall(self):
+        mw.blit(self.image, (self.rect.x, self.rect.y))
+
 game_over = False
 clock = time.Clock()
 mixer.music.load('jungles.ogg')
 mixer.music.play()
 
-player = Player('hero.png', 10, 420, 5)
+player = Player('hero.png', 10, 400, 5)
 cyborg = Enemy('cyborg.png', 625, 280, 5)
 gold = GameSprite('treasure.png', 625, 425)
+w1 = Wall(154, 205, 50, 100, 20 , 450, 10)
+w2 = Wall(154, 205, 50, 100, 480, 350, 10)
+w3 = Wall(154, 205, 50, 100, 20 , 10, 380)
+w4 = Wall(154, 205, 50, 200, 130, 10, 350)
+w5 = Wall(154, 205, 50, 450, 130, 10, 360)
+w6 = Wall(154, 205, 50, 300, 20, 10, 350)
+w7 = Wall(154, 205, 50, 390, 120, 130, 10)
 
 while not game_over:
     for e in event.get():
@@ -73,6 +97,15 @@ while not game_over:
     player.reset()
     cyborg.reset()
     gold.reset()
+    w1.draw_wall()
+    w2.draw_wall()
+    w3.draw_wall()
+    w4.draw_wall()
+    w5.draw_wall()
+    w6.draw_wall()
+    w7.draw_wall()
+
+    
 
     display.update()
     clock.tick(60)
