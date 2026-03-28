@@ -2,7 +2,7 @@
 from pygame import *
 
 class GameSprite(sprite.Sprite):
-    def __init__(self, ppicture, xcor, ycor, speed):
+    def __init__(self, ppicture, xcor, ycor, speed=0):
         super().__init__()
         self.ppicture = transform.scale(image.load(ppicture), (65, 65))
         self.rect = self.ppicture.get_rect()
@@ -16,27 +16,46 @@ class GameSprite(sprite.Sprite):
 mixer.init()
 display.init()
 
+mwWidth = 700
+mwHeight = 500
+
 mw = display.set_mode((700,500))
 display.set_caption('Maze')
 
-background = transform.scale(image.load('background.jpg'),(700,500))
+background = transform.scale(image.load('background.jpg'),(mwWidth,mwHeight))
+
+class Player(GameSprite):
+    def go(self):
+        keys = key.get_pressed()
+        if keys[K_LEFT] and self.rect.x > 0:
+            self.rect.x -= self.speed
+        if keys[K_RIGHT] and self.rect.x < mwWidth-65:
+            self.rect.x += self.speed
+        if keys[K_UP] and self.rect.y > 0:
+            self.rect.y -= self.speed
+        if keys[K_DOWN] and self.rect.y < mwHeight-65:
+            self.rect.y += self.speed
 
 game_over = False
 clock = time.Clock()
 mixer.music.load('jungles.ogg')
 mixer.music.play()
 
-player = GameSprite('hero.png', 10, 422, 5)
-cyborg = GameSprite('cyborg.png', 625, 280, 5)
+player = Player('hero.png', 10, 420, 5)
+cyborg = GameSprite('cyborg.png', 625, 280)
+gold = GameSprite('treasure.png', 625, 425)
 
 while not game_over:
     for e in event.get():
         if e.type == QUIT:
             game_over = True
+    
+    player.go()
 
     mw.blit(background, (0,0))
     player.reset()
     cyborg.reset()
+    gold.reset()
 
     display.update()
     clock.tick(60)
