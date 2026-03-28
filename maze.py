@@ -16,9 +16,11 @@ class GameSprite(sprite.Sprite):
 
 mixer.init()
 display.init()
+font.init()
 
 mwWidth = 700
 mwHeight = 500
+finish = False
 
 mw = display.set_mode((700,500))
 display.set_caption('Maze')
@@ -72,6 +74,8 @@ class Wall(sprite.Sprite):
 game_over = False
 clock = time.Clock()
 mixer.music.load('jungles.ogg')
+win_sound = mixer.Sound('kick.ogg')
+end_sound = mixer.Sound('money.ogg')
 mixer.music.play()
 
 player = Player('hero.png', 10, 400, 5)
@@ -89,23 +93,40 @@ while not game_over:
     for e in event.get():
         if e.type == QUIT:
             game_over = True
-    
-    player.go()
-    cyborg.go()
+    if finish != True:
+        player.go()
+        cyborg.go()
 
-    mw.blit(background, (0,0))
-    player.reset()
-    cyborg.reset()
-    gold.reset()
-    w1.draw_wall()
-    w2.draw_wall()
-    w3.draw_wall()
-    w4.draw_wall()
-    w5.draw_wall()
-    w6.draw_wall()
-    w7.draw_wall()
+        mw.blit(background, (0,0))
+        player.reset()
+        cyborg.reset()
+        gold.reset()
+        w1.draw_wall()
+        w2.draw_wall()
+        w3.draw_wall()
+        w4.draw_wall()
+        w5.draw_wall()
+        w6.draw_wall()
+        w7.draw_wall()
 
-    
+        if sprite.collide_rect(player, gold):
+            end_sound.play()
+            win_win = font.Font(None, 100).render('YOU WIN', False, (255,255,0))
+            finish = True
+            mw.blit(win_win, (200, 240))
+        
+        if (sprite.collide_rect(player, cyborg) or
+            sprite.collide_rect(player, w1) or
+            sprite.collide_rect(player, w2) or
+            sprite.collide_rect(player, w3) or
+            sprite.collide_rect(player, w4) or
+            sprite.collide_rect(player, w5) or
+            sprite.collide_rect(player, w6) or
+            sprite.collide_rect(player, w7)):
+            win_sound.play()
+            win_lose = font.Font(None, 100).render('YOU LOSE', False, (255,255,0))
+            finish = True
+            mw.blit(win_lose, (200, 240))
 
     display.update()
     clock.tick(60)
